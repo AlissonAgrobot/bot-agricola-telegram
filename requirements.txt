@@ -1,2 +1,4 @@
-python-telegram-bot[webhook]==20.7
+"python-telegram-bot[webhook]"==20.7
+aiohttp
+
 
