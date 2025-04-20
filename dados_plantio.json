@@ -1,0 +1,44 @@
+[
+  {
+    "fazenda": "Augusto Endo",
+    "data_plantio": "02/09/2024",
+    "area": 20.76,
+    "pivo": "Pivô 44",
+    "cultura": "🥕 Cenoura"
+  },
+  {
+    "fazenda": "Agroalpa",
+    "data_plantio": "14/11/2024",
+    "area": 22.0,
+    "pivo": "Campestre",
+    "cultura": "🥕 Cenoura"
+  },
+  {
+    "fazenda": "Augusto Endo",
+    "data_plantio": "13/03/2025",
+    "area": 62.82,
+    "pivo": "Pivô 46 - Lado 46 A e B",
+    "cultura": "🌾 Aveia"
+  },
+  {
+    "fazenda": "Lote 33",
+    "data_plantio": "17/03/2025",
+    "area": 36.3,
+    "pivo": "Pivô 19 - Lado Estradão",
+    "cultura": "🌿 Triticale"
+  },
+  {
+    "fazenda": "Agroalpa",
+    "data_plantio": "26/03/2025",
+    "area": 68.0,
+    "pivo": "Campestre",
+    "cultura": "🌾 Aveia"
+  },
+  {
+    "fazenda": "Catules",
+    "data_plantio": "29/04/2025",
+    "area": 26.0,
+    "pivo": "Pivô 115",
+    "cultura": "🥕 Cenoura"
+  }
+]
