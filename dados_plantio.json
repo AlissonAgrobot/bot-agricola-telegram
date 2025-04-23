@@ -1,0 +1,261 @@
+[
+    {
+        "fazenda": "Augusto Endo",
+        "data_plantio": "02/09/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 44",
+        "area": 20.76
+    },
+    {
+        "fazenda": "Augusto Endo",
+        "data_plantio": "09/09/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 45",
+        "area": 13.03
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "02/10/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 38 lado estradão",
+        "area": 18.1
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "14/10/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 38 lado estradão",
+        "area": 18.1
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "18/10/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivo 36 inf lado 37",
+        "area": 26.31
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "30/10/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivo 36 inf lado 33",
+        "area": 26.31
+    },
+    {
+        "fazenda": "Lote 33",
+        "data_plantio": "05/11/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 19 Lado estradão",
+        "area": 36.3
+    },
+    {
+        "fazenda": "Agroalpa Campestre",
+        "data_plantio": "14/11/24",
+        "cultura": "Cenoura",
+        "pivo": "",
+        "area": 22.0
+    },
+    {
+        "fazenda": "Lote 46",
+        "data_plantio": "19/11/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 03 sup.",
+        "area": 20.76
+    },
+    {
+        "fazenda": "Santo Amaro",
+        "data_plantio": "25/11/24",
+        "cultura": "Cenoura",
+        "pivo": "Sup. Pivô 15",
+        "area": 34.04
+    },
+    {
+        "fazenda": "Santo Amaro",
+        "data_plantio": "03/12/24",
+        "cultura": "Cenoura",
+        "pivo": "Inf. Pivô 15",
+        "area": 25.91
+    },
+    {
+        "fazenda": "José Maria",
+        "data_plantio": "12/12/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 68",
+        "area": 19.26
+    },
+    {
+        "fazenda": "Lote 46",
+        "data_plantio": "19/12/24",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 17",
+        "area": 26.83
+    },
+    {
+        "fazenda": "Augusto Endo",
+        "data_plantio": "02/01/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 53",
+        "area": 23.13
+    },
+    {
+        "fazenda": "Kim do Vale",
+        "data_plantio": "18/01/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 01 Sup",
+        "area": 17.89
+    },
+    {
+        "fazenda": "Kim do Vale",
+        "data_plantio": "19/01/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 02",
+        "area": 9.43
+    },
+    {
+        "fazenda": "Lote 46",
+        "data_plantio": "20/01/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 16 - Represa",
+        "area": 28.4
+    },
+    {
+        "fazenda": "Kim do Vale",
+        "data_plantio": "24/01/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 01 Inf.",
+        "area": 17.11
+    },
+    {
+        "fazenda": "Lote 46",
+        "data_plantio": "03/02/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 03 Inf.",
+        "area": 20.56
+    },
+    {
+        "fazenda": "Augusto Endo",
+        "data_plantio": "10/02/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 43 - Lado 43 C",
+        "area": 31.04
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "24/02/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 34",
+        "area": 27.42
+    },
+    {
+        "fazenda": "Aliança",
+        "data_plantio": "09/03/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 27",
+        "area": 19.11
+    },
+    {
+        "fazenda": "Aliança",
+        "data_plantio": "21/03/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 27",
+        "area": 19.11
+    },
+    {
+        "fazenda": "Aliança",
+        "data_plantio": "27/03/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 21 - Lado Pivô 22",
+        "area": 16.74
+    },
+    {
+        "fazenda": "Aliança",
+        "data_plantio": "07/03/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 21 - Lado Pivô 22",
+        "area": 16.74
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "29/03/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 33",
+        "area": 38.38
+    },
+    {
+        "fazenda": "Baía",
+        "data_plantio": "14/04/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 90",
+        "area": 22.0
+    },
+    {
+        "fazenda": "Catules",
+        "data_plantio": "29/04/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 115",
+        "area": 26.0
+    },
+    {
+        "fazenda": "Aliança",
+        "data_plantio": "01/05/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 24 inf. Lado pivô 21",
+        "area": 22.46
+    },
+    {
+        "fazenda": "Aliança",
+        "data_plantio": "07/05/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 24 inf. Lado Pivô 26",
+        "area": 13.5
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "12/05/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 29 - Lado pivô 28",
+        "area": 15.75
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "16/06/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 29 - Lado pivô 28",
+        "area": 15.75
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "26/06/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 39",
+        "area": 17.6
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "07/07/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 39",
+        "area": 17.6
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "18/07/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 36 - Lado Pivô 35",
+        "area": 21.5
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "31/07/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 29 - Lado pivô 30",
+        "area": 14.66
+    },
+    {
+        "fazenda": "Novo Horizonte",
+        "data_plantio": "11/08/25",
+        "cultura": "Cenoura",
+        "pivo": "Pivô 29 - Lado pivô 30",
+        "area": 14.66
+    }
+]
