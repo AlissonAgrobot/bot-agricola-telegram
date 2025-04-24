@@ -11,12 +11,13 @@ logging.basicConfig(level=logging.INFO)
 with open("dados_plantio.json", "r", encoding="utf-8") as f:
     dados_plantio = json.load(f)
 
-# Função para formatar resposta
+# Função para formatar múltiplos resultados por pivô
 def formatar_resposta_por_pivo(pivo):
+    resultados = []
     for item in dados_plantio:
         if pivo.lower() in item["pivo"].lower():
-            return (
-                f"📍 *Fazenda:* {item['fazenda']}\n"
+            resultado = (
+                f"\U0001F4CD *Fazenda:* {item['fazenda']}\n"
                 f"🗓️ *Data do plantio:* {item['data_plantio']}\n"
                 f"🌿 *Cultura:* {item['cultura']}\n"
                 f"🚰 *Pivô:* {item['pivo']}\n"
@@ -25,22 +26,26 @@ def formatar_resposta_por_pivo(pivo):
                 f"🌾 *Subsafra:* {item['subsafra']}\n"
                 f"🔁 *População/Ciclo:* {item['populacao_ciclo']}\n"
             )
-    return "Nenhuma informação encontrada para esse pivô."
+            resultados.append(resultado)
+    if resultados:
+        return "\n".join(resultados)
+    else:
+        return "Nenhuma informação encontrada para esse pivô."
 
 # Comando /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "Bot agrícola ativo! Digite algo como 'Pivô 90' para consultar o plantio."
+        "Bot agrícola ativo! Digite algo como 'Pivô 27' para consultar o plantio."
     )
 
 # Handler de mensagem comum
 async def responder_plantio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    texto = update.message.text
+    texto = update.message.text.strip()
     if "pivô" in texto.lower():
         resposta = formatar_resposta_por_pivo(texto)
         await update.message.reply_markdown(resposta)
     else:
-        await update.message.reply_text("Por favor, digite algo como 'Pivô 90' para consultar.")
+        await update.message.reply_text("Por favor, digite algo como 'Pivô 27' para consultar.")
 
 # Main
 if __name__ == '__main__':
@@ -56,3 +61,4 @@ if __name__ == '__main__':
         port=10000,
         webhook_url=f"https://{HOSTNAME}/"
     )
+
