@@ -7,9 +7,15 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Messa
 # Configuração do log
 logging.basicConfig(level=logging.INFO)
 
-# Carregar dados do JSON
+# Carregar dados dos dois JSONs
 with open("dados_plantio.json", "r", encoding="utf-8") as f:
-    dados_plantio = json.load(f)
+    dados_cenoura = json.load(f)
+
+with open("beterraba_plantios_2025.json", "r", encoding="utf-8") as f:
+    dados_beterraba = json.load(f)
+
+# Unir todos os dados em uma lista só
+dados_plantio = dados_cenoura + dados_beterraba
 
 # Função para formatar múltiplos resultados por pivô
 def formatar_resposta_por_pivo(pivo):
@@ -24,7 +30,7 @@ def formatar_resposta_por_pivo(pivo):
                 f"📊 *Área:* {item['area']:.2f} ha\n"
                 f"🌱 *Plantio:* {item['plantio']}\n"
                 f"🌾 *Subsafra:* {item['subsafra']}\n"
-                f"🔁 *População/Ciclo:* {item['populacao_ciclo']}\n"
+                f"\n"
             )
             resultados.append(resultado)
     if resultados:
@@ -61,4 +67,3 @@ if __name__ == '__main__':
         port=10000,
         webhook_url=f"https://{HOSTNAME}/"
     )
-
