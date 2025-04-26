@@ -1,0 +1,222 @@
+[
+    {
+        "plantio": "Cen242520",
+        "data_plantio": "2025-01-19",
+        "area": 9.43,
+        "fazenda": "Kim do Vale",
+        "pivo": "Pivô 02",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "500.000 / 100 dias"
+    },
+    {
+        "plantio": "Cen242521",
+        "data_plantio": "2025-01-20",
+        "area": 28.4,
+        "fazenda": "Lote 46",
+        "pivo": "Pivô 16 - Represa",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "500.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242522",
+        "data_plantio": "2025-01-24",
+        "area": 17.11,
+        "fazenda": "Kim do Vale",
+        "pivo": "Pivô 01 Inf.",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "500.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242523",
+        "data_plantio": "2025-02-03",
+        "area": 20.56,
+        "fazenda": "Lote 46",
+        "pivo": "Pivô 03 Inf.",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "520.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242524",
+        "data_plantio": "2025-02-10",
+        "area": 31.04,
+        "fazenda": "Augusto Endo",
+        "pivo": "Pivô 43 - Lado 43 C",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "520.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242525",
+        "data_plantio": "2025-02-24",
+        "area": 27.42,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 34",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "520.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242526",
+        "data_plantio": "2025-03-09",
+        "area": 19.11,
+        "fazenda": "Aliança",
+        "pivo": "Pivô 27",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "540.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242527",
+        "data_plantio": "2025-03-21",
+        "area": 19.11,
+        "fazenda": "Aliança",
+        "pivo": "Pivô 27",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "580.000 / 120 dias"
+    },
+    {
+        "plantio": "Cen242528",
+        "data_plantio": "2025-03-27",
+        "area": 16.74,
+        "fazenda": "Aliança",
+        "pivo": "Pivô 21 - Lado Pivô 22",
+        "cultura": "Cenoura",
+        "subsafra": "Verão",
+        "populacao_ciclo": "600.000 / 125 dias"
+    },
+    {
+        "plantio": "Cen242529",
+        "data_plantio": "2025-03-07",
+        "area": 16.74,
+        "fazenda": "Aliança",
+        "pivo": "Pivô 21 - Lado Pivô 22",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "560.000 / 148 dias"
+    },
+    {
+        "plantio": "Cen242530",
+        "data_plantio": "2025-03-29",
+        "area": 38.38,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 33",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "600.000 / 135 dias"
+    },
+    {
+        "plantio": "Cen242531",
+        "data_plantio": "2025-04-14",
+        "area": 22.0,
+        "fazenda": "Baía",
+        "pivo": "Pivô 90",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "690.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242532",
+        "data_plantio": "2025-04-29",
+        "area": 26.0,
+        "fazenda": "Catules",
+        "pivo": "Pivô 115",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "690.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242533",
+        "data_plantio": "2025-05-01",
+        "area": 22.46,
+        "fazenda": "Aliança",
+        "pivo": "Pivô 24 inf. Lado pivô 21",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "690.000 / 154 dias"
+    },
+    {
+        "plantio": "Cen242534",
+        "data_plantio": "2025-05-07",
+        "area": 13.5,
+        "fazenda": "Aliança",
+        "pivo": "Pivô 24 inf. Lado Pivô 26",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "690.000 / 162 dias"
+    },
+    {
+        "plantio": "Cen242535",
+        "data_plantio": "2025-05-12",
+        "area": 15.75,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 29 - Lado pivô 28",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "690.000 / 165 dias"
+    },
+    {
+        "plantio": "Cen242536",
+        "data_plantio": "2025-06-16",
+        "area": 15.75,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 29 - Lado pivô 28",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "630.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242537",
+        "data_plantio": "2025-06-26",
+        "area": 17.6,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 39",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "630.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242538",
+        "data_plantio": "2025-07-07",
+        "area": 17.6,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 39",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "630.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242539",
+        "data_plantio": "2025-07-18",
+        "area": 21.5,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 36 - Lado Pivô 35",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "630.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242540",
+        "data_plantio": "2025-07-31",
+        "area": 14.66,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 29 - Lado pivô 30",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "630.000 / 140 dias"
+    },
+    {
+        "plantio": "Cen242541",
+        "data_plantio": "2025-08-11",
+        "area": 14.66,
+        "fazenda": "Novo Horizonte",
+        "pivo": "Pivô 29 - Lado pivô 30",
+        "cultura": "Cenoura",
+        "subsafra": "Inverno",
+        "populacao_ciclo": "600.000 / 140 dias"
+    }
+]
