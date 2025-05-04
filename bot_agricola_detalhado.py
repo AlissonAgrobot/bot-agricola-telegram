@@ -59,7 +59,7 @@ async def botoes_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("Digite o pivô que deseja consultar. Ex: Pivô 27")
     elif query.data == 'listar':
         total = len(dados_plantio)
-        await query.edit_message_text(f"Temos {total} plantios cadastrados no sistema.")
+        await query.edit_message_text(f"Temos {total} plantios cadastrados no sistema Cenoura é Beterraba.")
     elif query.data == 'sobre':
         await query.edit_message_text("Bot criado para consulta rápida de dados de plantio por pivô. Desenvolvido por Alisson ✨")
     elif query.data == 'fechar':
