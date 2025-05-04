@@ -1,8 +1,8 @@
 import json
 import logging
 import os
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, CallbackQueryHandler, filters
 
 # Configuração do log
 logging.basicConfig(level=logging.INFO)
@@ -14,10 +14,10 @@ with open("dados_plantio.json", "r", encoding="utf-8") as f:
 with open("beterraba_plantios_2025.json", "r", encoding="utf-8") as f:
     dados_beterraba = json.load(f)
 
-# Unir todos os dados em uma lista só
+# Unir todos os dados
 dados_plantio = dados_cenoura + dados_beterraba
 
-# Função para formatar múltiplos resultados por pivô
+# Função para formatar resposta por pivô
 def formatar_resposta_por_pivo(pivo):
     resultados = []
     for item in dados_plantio:
@@ -29,22 +29,43 @@ def formatar_resposta_por_pivo(pivo):
                 f"🚰 *Pivô:* {item['pivo']}\n"
                 f"📊 *Área:* {item['area']:.2f} ha\n"
                 f"🌱 *Plantio:* {item['plantio']}\n"
-                f"🌾 *Subsafra:* {item['subsafra']}\n"
-                f"\n"
+                f"🌾 *Subsafra:* {item.get('subsafra', '-') }\n"
+                f"🔀 *População/Ciclo:* {item.get('populacao_ciclo', '-') }\n"
             )
             resultados.append(resultado)
-    if resultados:
-        return "\n".join(resultados)
-    else:
-        return "Nenhuma informação encontrada para esse pivô."
+    return "\n---\n".join(resultados) if resultados else "Nenhuma informação encontrada para esse pivô."
 
-# Comando /start
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Bot agrícola ativo! Digite algo como 'Pivô 27' para consultar o plantio."
-    )
+    await update.message.reply_text("Bot agrícola ativo! Digite algo como 'Pivô 27' para consultar ou use /menu para acessar opções.")
 
-# Handler de mensagem comum
+# /menu com botões
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("🔍 Buscar por Pivô", callback_data='buscar_pivo')],
+        [InlineKeyboardButton("🌿 Listar Plantios", callback_data='listar')],
+        [InlineKeyboardButton("📄 Sobre o Bot", callback_data='sobre')],
+        [InlineKeyboardButton("❌ Fechar Menu", callback_data='fechar')]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text("📋 *Menu de Acesso Rápido:*", reply_markup=reply_markup, parse_mode="Markdown")
+
+# Callback dos botões
+async def botoes_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    
+    if query.data == 'buscar_pivo':
+        await query.edit_message_text("Digite o pivô que deseja consultar. Ex: Pivô 27")
+    elif query.data == 'listar':
+        total = len(dados_plantio)
+        await query.edit_message_text(f"Temos {total} plantios cadastrados no sistema.")
+    elif query.data == 'sobre':
+        await query.edit_message_text("Bot criado para consulta rápida de dados de plantio por pivô. Desenvolvido por Alisson ✨")
+    elif query.data == 'fechar':
+        await query.edit_message_text("Menu fechado. Digite /menu para abrir novamente.")
+
+# Handler de mensagens
 async def responder_plantio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = update.message.text.strip()
     if "pivô" in texto.lower():
@@ -60,6 +81,8 @@ if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("menu", menu))
+    app.add_handler(CallbackQueryHandler(botoes_callback))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_plantio))
 
     app.run_webhook(
@@ -67,3 +90,4 @@ if __name__ == '__main__':
         port=10000,
         webhook_url=f"https://{HOSTNAME}/"
     )
+
