@@ -35,7 +35,7 @@ def formatar_resposta_por_pivo(pivo):
             resultados.append(resultado)
     return "\n---\n".join(resultados) if resultados else "Nenhuma informação encontrada para esse pivô."
 
-# /start mostra o menu direto
+# start mostra o menu direto
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🔍 Buscar por Pivô", callback_data='buscar_pivo')],
