@@ -35,8 +35,8 @@ def formatar_resposta_por_pivo(pivo):
             resultados.append(resultado)
     return "\n---\n".join(resultados) if resultados else "Nenhuma informação encontrada para esse pivô."
 
-# start mostra o menu direto
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# Função para mostrar o menu
+async def mostrar_menu(update_or_query, context):
     keyboard = [
         [InlineKeyboardButton("🔍 Buscar por Pivô", callback_data='buscar_pivo')],
         [InlineKeyboardButton("🌿 Listar Plantios", callback_data='listar')],
@@ -44,11 +44,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("❌ Fechar Menu", callback_data='fechar')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("📋 *Menu de Acesso Rápido:*", reply_markup=reply_markup, parse_mode="Markdown")
+    if hasattr(update_or_query, "message"):
+        await update_or_query.message.reply_text("📋 *Menu de Acesso Rápido:*", reply_markup=reply_markup, parse_mode="Markdown")
+    else:
+        await update_or_query.edit_message_text("📋 *Menu de Acesso Rápido:*", reply_markup=reply_markup, parse_mode="Markdown")
 
-# /menu também mostra os mesmos botões
+# /start mostra o menu direto
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await mostrar_menu(update, context)
+
+# /menu também mostra o menu
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await start(update, context)
+    await mostrar_menu(update, context)
 
 # Callback dos botões
 async def botoes_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -61,18 +68,19 @@ async def botoes_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         total = len(dados_plantio)
         await query.edit_message_text(f"Temos {total} plantios cadastrados no sistema Cenoura é Beterraba.")
     elif query.data == 'sobre':
-        await query.edit_message_text("Bot criado para consulta rápida de dados de plantio por pivô. Desenvolvido por Alisson Costa ✨")
+        await query.edit_message_text("Bot criado para consulta rápida de dados de plantio por pivô. Desenvolvido por Alisson Costa✨")
     elif query.data == 'fechar':
         await query.edit_message_text("Menu fechado. Digite /menu para abrir novamente.")
 
-# Handler de mensagens
+# Handler de mensagens genéricas
 async def responder_plantio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = update.message.text.strip()
     if "pivô" in texto.lower():
         resposta = formatar_resposta_por_pivo(texto)
         await update.message.reply_markdown(resposta)
     else:
-        await update.message.reply_text("Por favor, digite algo como 'Pivô 27' para consultar.")
+        await update.message.reply_text("Você pode consultar digitando o pivô. Ex: Pivô 27")
+        await mostrar_menu(update, context)
 
 # Main
 if __name__ == '__main__':
