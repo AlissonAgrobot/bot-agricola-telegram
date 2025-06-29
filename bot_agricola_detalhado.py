@@ -4,7 +4,7 @@ import requests
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-TOKEN = "8017917203:AAFkFetRWXGwH8uObYxn-rx9aeU-s7rKBVU"
+TOKEN = "8006515043:AAFapaNdYxv1sfgH126gxuBx3vAASAz-UF4"
 OPENWEATHER_API_KEY = "a633bcced8f4d4eb76047d2a4981e252"
 SENTINEL_INSTANCE_ID = "1b9f5321-056a-4a9e-beaa-954934167ba0"
 
