@@ -1,100 +1,71 @@
+
 import json
 import logging
-import os
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, CallbackQueryHandler, filters
+import requests
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-# Configuração do log
+TOKEN = "8017917203:AAFkFetRWXGwH8uObYxn-rx9aeU-s7rKBVU"
+OPENWEATHER_API_KEY = "a633bcced8f4d4eb76047d2a4981e252"
+SENTINEL_INSTANCE_ID = "1b9f5321-056a-4a9e-beaa-954934167ba0"
+
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Carregar dados dos dois JSONs
-with open("dados_plantio.json", "r", encoding="utf-8") as f:
-    dados_cenoura = json.load(f)
+with open("dados_plantio.json", encoding="utf-8") as f:
+    dados_plantio = json.load(f)
 
-with open("beterraba_plantios_2025.json", "r", encoding="utf-8") as f:
-    dados_beterraba = json.load(f)
-
-# Unir todos os dados
-dados_plantio = dados_cenoura + dados_beterraba
-
-# Função para formatar resposta por pivô
-def formatar_resposta_por_pivo(pivo):
-    resultados = []
-    for item in dados_plantio:
-        if pivo.lower() in item["pivo"].lower():
-            resultado = (
-                f"\U0001F4CD *Fazenda:* {item['fazenda']}\n"
-                f"🗓️ *Data do plantio:* {item['data_plantio']}\n"
-                f"🌿 *Cultura:* {item['cultura']}\n"
-                f"🚰 *Pivô:* {item['pivo']}\n"
-                f"📊 *Área:* {item['area']:.2f} ha\n"
-                f"🌱 *Plantio:* {item['plantio']}\n"
-                f"🌾 *Subsafra:* {item.get('subsafra', '-') }\n"
-                f"🔀 *População/Ciclo:* {item.get('populacao_ciclo', '-') }\n"
-            )
-            resultados.append(resultado)
-    return "\n---\n".join(resultados) if resultados else "Nenhuma informação encontrada para esse pivô."
-
-# Função para mostrar o menu
-async def mostrar_menu(update_or_query, context):
-    keyboard = [
-        [InlineKeyboardButton("🔍 Buscar por Pivô", callback_data='buscar_pivo')],
-        [InlineKeyboardButton("🌿 Listar Plantios", callback_data='listar')],
-        [InlineKeyboardButton("📄 Sobre o Bot", callback_data='sobre')],
-        [InlineKeyboardButton("❌ Fechar Menu", callback_data='fechar')]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    if hasattr(update_or_query, "message"):
-        await update_or_query.message.reply_text("📋 *Menu de Acesso Rápido:*", reply_markup=reply_markup, parse_mode="Markdown")
-    else:
-        await update_or_query.edit_message_text("📋 *Menu de Acesso Rápido:*", reply_markup=reply_markup, parse_mode="Markdown")
-
-# /start mostra o menu direto
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await mostrar_menu(update, context)
-
-# /menu também mostra o menu
-async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await mostrar_menu(update, context)
-
-# Callback dos botões
-async def botoes_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    if query.data == 'buscar_pivo':
-        await query.edit_message_text("Digite o pivô que deseja consultar. Ex: Pivô 27")
-    elif query.data == 'listar':
-        total = len(dados_plantio)
-        await query.edit_message_text(f"Temos {total} plantios cadastrados no sistema Cenoura é Beterraba.")
-    elif query.data == 'sobre':
-        await query.edit_message_text("Bot criado para consulta rápida de dados de plantio por pivô. Desenvolvido por Alisson Costa✨")
-    elif query.data == 'fechar':
-        await query.edit_message_text("Menu fechado. Digite /menu para abrir novamente.")
-
-# Handler de mensagens genéricas
-async def responder_plantio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    texto = update.message.text.strip()
-    if "pivô" in texto.lower():
-        resposta = formatar_resposta_por_pivo(texto)
-        await update.message.reply_markdown(resposta)
-    else:
-        await update.message.reply_text("Você pode consultar digitando o pivô. Ex: Pivô 27")
-        await mostrar_menu(update, context)
-
-# Main
-if __name__ == '__main__':
-    TOKEN = os.getenv("TELEGRAM_TOKEN")
-    HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("menu", menu))
-    app.add_handler(CallbackQueryHandler(botoes_callback))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_plantio))
-
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=10000,
-        webhook_url=f"https://{HOSTNAME}/"
+    welcome = (
+        "🌾 Olá, seja bem-vindo ao Bot Agrícola Sekita!\n"
+        "Aqui você encontra as informações dos plantios e a localização das áreas.\n"
+        "Digite (ex: Pivô 01). 🌱"
     )
+    await update.message.reply_text(welcome)
+
+def buscar_info_pivo(pivo_nome):
+    return [p for p in dados_plantio if pivo_nome.lower() in p["pivo"].lower()]
+
+def obter_clima(lat, lon):
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric&lang=pt_br"
+    r = requests.get(url).json()
+    if "weather" in r:
+        return f"🌤️ *Clima agora:* {r['weather'][0]['description'].capitalize()}, {r['main']['temp']}°C"
+    return "❌ Clima indisponível."
+
+def gerar_link_satelite(lat, lon):
+    return f"https://apps.sentinel-hub.com/eo-browser/?lat={lat}&lng={lon}&zoom=16&themeId=DEFAULT-THEME&instanceId={SENTINEL_INSTANCE_ID}"
+
+async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    consulta = update.message.text.strip()
+    resultados = buscar_info_pivo(consulta)
+    if not resultados:
+        await update.message.reply_text("❌ Nenhum plantio encontrado para este pivô.")
+        return
+    for r in resultados:
+        lat, lon = r["latitude"], r["longitude"]
+        clima = obter_clima(lat, lon)
+        img = gerar_link_satelite(lat, lon)
+        texto = f"""📍 *Fazenda:* {r['fazenda']}
+📅 *Data do Plantio:* {r['data_plantio']}
+🥕 *Cultura:* {r['cultura']}
+🌀 *Pivô:* {r['pivo']}
+📐 *Área:* {r['area']} ha
+🌱 *Plantio:* {r['numero_plantio']}
+📆 *Subsafra:* {r['subsafra']}
+👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}
+
+{clima}
+
+🛰️ *Imagem Satélite Atualizada:*
+{img}"""
+        await update.message.reply_text(texto, parse_mode="Markdown")
+
+def main():
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_pivo))
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
