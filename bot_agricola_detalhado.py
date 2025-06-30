@@ -30,38 +30,49 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def buscar_info_pivo(pivo_nome):
     return [p for p in dados_plantio if pivo_nome.lower() in p["pivo"].lower()]
 
-# Obter clima com temperatura, umidade e vento
+# Obter clima atual + previsão de chuva
 def obter_clima(lat, lon):
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric&lang=pt_br"
+    url = (
+        f"https://api.openweathermap.org/data/2.5/forecast?"
+        f"lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric&lang=pt_br"
+    )
     r = requests.get(url).json()
-    if "weather" in r and "main" in r and "wind" in r:
-        descricao = r['weather'][0]['description'].capitalize()
-        temp = r['main']['temp']
-        umidade = r['main']['humidity']
-        vento = r['wind']['speed']
+    if "list" in r and len(r["list"]) > 0:
+        atual = r["list"][0]
+        descricao = atual["weather"][0]["description"].capitalize()
+        temp = atual["main"]["temp"]
+        umidade = atual["main"]["humidity"]
+        vento = atual["wind"]["speed"]
+
+        chuva = atual.get("pop", 0) * 100  # probabilidade de chuva
+        chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%\n" if chuva > 0 else ""
+
         return (
             f"🌤️ *Clima agora:* {descricao}\n"
             f"🌡️ Temperatura: {temp}°C\n"
             f"💧 Umidade: {umidade}%\n"
-            f"🍃 Vento: {vento} m/s"
+            f"🍃 Vento: {vento} m/s\n"
+            f"{chuva_texto}"
         )
     return "❌ Clima indisponível."
 
-# Gerar link da imagem de satélite
+# Link satélite
 def gerar_link_satelite(lat, lon):
     return f"https://apps.sentinel-hub.com/eo-browser/?lat={lat}&lng={lon}&zoom=16&themeId=DEFAULT-THEME&instanceId={SENTINEL_INSTANCE_ID}"
 
-# Resposta automática ao digitar pivô
+# Resposta automática
 async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     consulta = update.message.text.strip()
     resultados = buscar_info_pivo(consulta)
     if not resultados:
         await update.message.reply_text("❌ Nenhum plantio encontrado para este pivô.")
         return
+
     for r in resultados:
         lat, lon = r["latitude"], r["longitude"]
         clima = obter_clima(lat, lon)
         img = gerar_link_satelite(lat, lon)
+
         texto = f"""📍 *Fazenda:* {r['fazenda']}
 📅 *Data do Plantio:* {r['data_plantio']}
 🥕 *Cultura:* {r['cultura']}
@@ -72,12 +83,17 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}
 
 {clima}
-
 🛰️ *Imagem Satélite Atualizada:*
-{img}"""
+{img}
+📌 *Localização do pivô no mapa:* 👇"""
+
+        # Envia o texto com Markdown
         await update.message.reply_text(texto, parse_mode="Markdown")
 
-# Inicializar aplicação
+        # Envia o ponto geográfico
+        await update.message.reply_location(latitude=lat, longitude=lon)
+
+# Iniciar app
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
