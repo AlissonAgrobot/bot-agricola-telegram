@@ -20,11 +20,17 @@ with open("dados_plantio.json", encoding="utf-8") as f:
 # Mensagem de boas-vindas
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome = (
-        "🌾 Olá, seja bem-vindo ao Bot Agrícola Sekita!\n"
-        "Aqui você encontra as informações dos plantios e a localização das áreas.\n"
-        "Digite (ex: Pivô 01). 🌱"
+        "🌾 *Olá, seja bem-vindo ao Bot Agrícola Sekita!*\n\n"
+        "Aqui você consulta rapidamente as informações dos plantios da fazenda.\n\n"
+        "📌 Digite o número do pivô (ex: *Pivô 21*) para receber:\n"
+        "• Dados do plantio (cultura, área, data, subsafra)\n"
+        "• 🌦️ Clima atual e previsão de chuva\n"
+        "• 🛰️ Imagem de satélite atualizada\n"
+        "• 📍 Localização exata no mapa\n\n"
+        "🌱 Experimente agora digitando o número de um pivô."
     )
-    await update.message.reply_text(welcome)
+    await update.message.reply_text(welcome, parse_mode="Markdown")
+
 
 # Buscar informações do pivô
 def buscar_info_pivo(pivo_nome):
