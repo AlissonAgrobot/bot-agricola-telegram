@@ -1,6 +1,7 @@
 import json
 import logging
 import requests
+from datetime import datetime, timedelta
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
@@ -19,24 +20,19 @@ with open("dados_plantio.json", encoding="utf-8") as f:
 
 # Mensagem de boas-vindas
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    welcome = (
-        "🌾 *Olá, seja bem-vindo ao Bot Agrícola Sekita!*\n\n"
-        "Aqui você consulta rapidamente as informações dos plantios da fazenda.\n\n"
-        "📌 Digite o número do pivô (ex: *Pivô 21*) para receber:\n"
-        "• Dados do plantio (cultura, área, data, subsafra)\n"
-        "• 🌦️ Clima atual e previsão de chuva\n"
-        "• 🛰️ Imagem de satélite atualizada\n"
-        "• 📍 Localização exata no mapa\n\n"
-        "🌱 Experimente agora digitando o número de um pivô."
+    mensagem = (
+        "🌾 Olá, seja bem-vindo ao *Bot Agrícola Sekita*!\n\n"
+        "Aqui você consulta informações dos pivôs de plantio: cultura, área, data, população e ciclo.\n"
+        "O bot também fornece localização no mapa, clima atual (com previsão de chuva) e imagem de satélite atualizada da área.\n\n"
+        "Digite o número de um pivô, como por exemplo:\n➡️ *Pivô 21*"
     )
-    await update.message.reply_text(welcome, parse_mode="Markdown")
+    await update.message.reply_text(mensagem, parse_mode="Markdown")
 
-
-# Buscar informações do pivô
+# Buscar informações
 def buscar_info_pivo(pivo_nome):
     return [p for p in dados_plantio if pivo_nome.lower() in p["pivo"].lower()]
 
-# Obter clima atual + previsão de chuva
+# Obter clima com previsão
 def obter_clima(lat, lon):
     url = (
         f"https://api.openweathermap.org/data/2.5/forecast?"
@@ -49,22 +45,30 @@ def obter_clima(lat, lon):
         temp = atual["main"]["temp"]
         umidade = atual["main"]["humidity"]
         vento = atual["wind"]["speed"]
-
-        chuva = atual.get("pop", 0) * 100  # probabilidade de chuva
-        chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%\n" if chuva > 0 else ""
+        chuva = atual.get("pop", 0) * 100
+        chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%" if chuva > 0 else "🌧️ Previsão de chuva: 0%"
 
         return (
             f"🌤️ *Clima agora:* {descricao}\n"
-            f"🌡️ Temperatura: {temp}°C\n"
+            f"🌡️ Temperatura: {temp:.1f}°C\n"
             f"💧 Umidade: {umidade}%\n"
-            f"🍃 Vento: {vento} m/s\n"
+            f"🍃 Vento: {vento:.2f} m/s\n"
             f"{chuva_texto}"
         )
     return "❌ Clima indisponível."
 
-# Link satélite
+# Link EO-Browser (com qualidade melhor e data atualizada)
 def gerar_link_satelite(lat, lon):
-    return f"https://apps.sentinel-hub.com/eo-browser/?lat={lat}&lng={lon}&zoom=16&themeId=DEFAULT-THEME&instanceId={SENTINEL_INSTANCE_ID}"
+    hoje = datetime.utcnow().date()
+    sete_dias_atras = hoje - timedelta(days=7)
+    return (
+        f"https://apps.sentinel-hub.com/eo-browser/"
+        f"?lat={lat}&lng={lon}&zoom=16"
+        f"&themeId=AGRICULTURE-NORMAL-MODE"
+        f"&datasetId=S2L2A"
+        f"&fromTime={sete_dias_atras}&toTime={hoje}"
+        f"&instanceId={SENTINEL_INSTANCE_ID}"
+    )
 
 # Resposta automática
 async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -77,7 +81,7 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for r in resultados:
         lat, lon = r["latitude"], r["longitude"]
         clima = obter_clima(lat, lon)
-        img = gerar_link_satelite(lat, lon)
+        img_link = gerar_link_satelite(lat, lon)
 
         texto = f"""📍 *Fazenda:* {r['fazenda']}
 📅 *Data do Plantio:* {r['data_plantio']}
@@ -89,15 +93,12 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}
 
 {clima}
-🛰️ *Imagem Satélite Atualizada:*
-{img}
-📌 *Localização do pivô no mapa:* 👇"""
 
-        # Envia o texto com Markdown
+🗺️ *Imagem do Pivô Atualizada no Mapa:* 👇"""
+
         await update.message.reply_text(texto, parse_mode="Markdown")
-
-        # Envia o ponto geográfico
         await update.message.reply_location(latitude=lat, longitude=lon)
+        await update.message.reply_text(img_link)
 
 # Iniciar app
 def main():
