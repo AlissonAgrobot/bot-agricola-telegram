@@ -20,19 +20,18 @@ with open("dados_plantio.json", encoding="utf-8") as f:
 
 # Mensagem de boas-vindas
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    mensagem = (
-        "🌾 Olá, seja bem-vindo ao *Bot Agrícola Sekita*!\n\n"
-        "Aqui você consulta informações dos pivôs de plantio: cultura, área, data, população e ciclo.\n"
-        "O bot também fornece localização no mapa, clima atual (com previsão de chuva) e imagem de satélite atualizada da área.\n\n"
-        "Digite o número de um pivô, como por exemplo:\n➡️ *Pivô 21*"
+    welcome = (
+        "🌾 Olá! Este é o Bot Agrícola Sekita.\n"
+        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagem de satélite atualizada.\n"
+        "Digite (ex: Pivô 01) para começar. 🌱"
     )
-    await update.message.reply_text(mensagem, parse_mode="Markdown")
+    await update.message.reply_text(welcome)
 
-# Buscar informações
+# Buscar informações do pivô
 def buscar_info_pivo(pivo_nome):
     return [p for p in dados_plantio if pivo_nome.lower() in p["pivo"].lower()]
 
-# Obter clima com previsão
+# Obter clima atual + previsão de chuva
 def obter_clima(lat, lon):
     url = (
         f"https://api.openweathermap.org/data/2.5/forecast?"
@@ -46,31 +45,36 @@ def obter_clima(lat, lon):
         umidade = atual["main"]["humidity"]
         vento = atual["wind"]["speed"]
         chuva = atual.get("pop", 0) * 100
-        chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%" if chuva > 0 else "🌧️ Previsão de chuva: 0%"
+
+        if chuva > 0:
+            chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%"
+        else:
+            chuva_texto = "🌧️ Previsão de chuva: Nenhuma chuva prevista nas próximas horas."
 
         return (
             f"🌤️ *Clima agora:* {descricao}\n"
-            f"🌡️ Temperatura: {temp:.1f}°C\n"
+            f"🌡️ Temperatura: {temp}°C\n"
             f"💧 Umidade: {umidade}%\n"
             f"🍃 Vento: {vento:.2f} m/s\n"
             f"{chuva_texto}"
         )
     return "❌ Clima indisponível."
 
-# Link EO-Browser (com qualidade melhor e data atualizada)
+# Link satélite com data automática dos últimos 7 dias
 def gerar_link_satelite(lat, lon):
-    hoje = datetime.utcnow().date()
-    sete_dias_atras = hoje - timedelta(days=7)
+    hoje = datetime.utcnow()
+    inicio = hoje - timedelta(days=7)
+    data_inicio = inicio.strftime("%Y-%m-%d")
+    data_fim = hoje.strftime("%Y-%m-%d")
+
     return (
-        f"https://apps.sentinel-hub.com/eo-browser/"
-        f"?lat={lat}&lng={lon}&zoom=16"
-        f"&themeId=AGRICULTURE-NORMAL-MODE"
-        f"&datasetId=S2L2A"
-        f"&fromTime={sete_dias_atras}&toTime={hoje}"
+        f"https://apps.sentinel-hub.com/eo-browser/?"
+        f"lat={lat}&lng={lon}&zoom=16&themeId=AGRICULTURE-NORMAL-MODE"
+        f"&datasetId=S2L2A&fromTime={data_inicio}&toTime={data_fim}"
         f"&instanceId={SENTINEL_INSTANCE_ID}"
     )
 
-# Resposta automática
+# Resposta automática do bot
 async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     consulta = update.message.text.strip()
     resultados = buscar_info_pivo(consulta)
@@ -81,7 +85,7 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for r in resultados:
         lat, lon = r["latitude"], r["longitude"]
         clima = obter_clima(lat, lon)
-        img_link = gerar_link_satelite(lat, lon)
+        link = gerar_link_satelite(lat, lon)
 
         texto = f"""📍 *Fazenda:* {r['fazenda']}
 📅 *Data do Plantio:* {r['data_plantio']}
@@ -94,11 +98,12 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 {clima}
 
-🗺️ *Imagem do Pivô Atualizada no Mapa:* 👇"""
+📌 *Localização do pivô no mapa:* 👇
+[Sentinel-Hub EO-Browser3]({link})
+"""
 
         await update.message.reply_text(texto, parse_mode="Markdown")
         await update.message.reply_location(latitude=lat, longitude=lon)
-        await update.message.reply_text(img_link)
 
 # Iniciar app
 def main():
