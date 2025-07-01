@@ -22,7 +22,7 @@ with open("dados_plantio.json", encoding="utf-8") as f:
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome = (
         "🌾 Olá! Este é o Bot Agrícola Sekita.\n"
-        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagem de satélite atualizada.\n"
+        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagem de satélite.\n"
         "Digite (ex: Pivô 01) para começar. 🌱"
     )
     await update.message.reply_text(welcome)
@@ -49,7 +49,7 @@ def obter_clima(lat, lon):
         if chuva > 0:
             chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%"
         else:
-            chuva_texto = "🌧️ Previsão de chuva: Nenhuma chuva prevista nas próximas horas."
+            chuva_texto = "🌧️ Previsão de chuva: 0%"
 
         return (
             f"🌤️ *Clima agora:* {descricao}\n"
@@ -98,8 +98,7 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 {clima}
 
-📌 *Localização do pivô no mapa:* 👇
-[Sentinel-Hub EO-Browser3]({link})
+🛰️ *Imagem do Pivô Atualizada no Mapa:* [Clique aqui]({link})
 """
 
         await update.message.reply_text(texto, parse_mode="Markdown")
