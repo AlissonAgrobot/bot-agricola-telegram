@@ -1,15 +1,13 @@
 import json
 import logging
+import urllib.parse
 import requests
-from datetime import datetime, timedelta
-from telegram import Update, InputFile
+from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
-# ============ CONFIGURAÇÕES ============
+# ============ CONFIG ============
 TOKEN = "8006515043:AAFapaNdYxv1sfgH126gxuBx3vAASAz-UF4"
 OPENWEATHER_API_KEY = "a633bcced8f4d4eb76047d2a4981e252"
-SENTINEL_CLIENT_ID = "91639194-75b7-4fd5-862a-55f3ce60b58b"
-SENTINEL_CLIENT_SECRET = "XrBXCRahvPprZjZ1xkKNgqLr6IbVpJm1"
 
 # ============ LOG ============
 logging.basicConfig(level=logging.INFO)
@@ -64,45 +62,28 @@ function evaluatePixel(samples) {
 }
 """
 
-# ============ OAUTH2 ============
-def obter_token_sentinel():
-    url = "https://services.sentinel-hub.com/oauth/token"
-    data = {
-        "grant_type": "client_credentials",
-        "client_id": SENTINEL_CLIENT_ID,
-        "client_secret": SENTINEL_CLIENT_SECRET
-    }
-    r = requests.post(url, data=data)
-    return r.json().get("access_token")
+# ============ LINKS SENTINEL ============
+def gerar_links_sentinel(lat, lon):
+    base_url = "https://apps.sentinel-hub.com/eo-browser/"
+    from_date = "2024-06-01"
+    to_date = datetime.now().strftime("%Y-%m-%d")
 
-# ============ IMAGENS ============
-def baixar_imagem(lat, lon, script, nome_arquivo):
-    token = obter_token_sentinel()
-    url = "https://services.sentinel-hub.com/api/v1/process"
-    headers = {"Authorization": f"Bearer {token}"}
-    payload = {
-        "input": {
-            "bounds": {
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [lon, lat]
-                }
-            },
-            "data": [{"type": "sentinel-2-l2a"}]
-        },
-        "output": {
-            "width": 512,
-            "height": 512,
-            "responses": [{"identifier": "default", "format": {"type": "image/png"}}]
-        },
-        "evalscript": script
-    }
-    r = requests.post(url, headers=headers, json=payload)
-    if r.ok:
-        with open(nome_arquivo, "wb") as f:
-            f.write(r.content)
-        return nome_arquivo
-    return None
+    script_rgb = urllib.parse.quote(SCRIPT_RGB)
+    script_ndvi = urllib.parse.quote(SCRIPT_NDVI)
+
+    link_rgb = (
+        f"{base_url}?lat={lat}&lng={lon}&zoom=16"
+        f"&evalscript={script_rgb}"
+        f"&datasetId=S2L2A&fromTime={from_date}&toTime={to_date}"
+    )
+
+    link_ndvi = (
+        f"{base_url}?lat={lat}&lng={lon}&zoom=16"
+        f"&evalscript={script_ndvi}"
+        f"&datasetId=S2L2A&fromTime={from_date}&toTime={to_date}"
+    )
+
+    return link_rgb, link_ndvi
 
 # ============ CLIMA ============
 def obter_clima(lat, lon):
@@ -151,6 +132,7 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for r in resultados:
         lat, lon = r["latitude"], r["longitude"]
         clima = obter_clima(lat, lon)
+        link_rgb, link_ndvi = gerar_links_sentinel(lat, lon)
 
         texto = (
             f"📍 *Fazenda:* {r['fazenda']}\n"
@@ -161,19 +143,12 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🌱 *Plantio:* {r['numero_plantio']}\n"
             f"📆 *Subsafra:* {r['subsafra']}\n"
             f"👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}\n\n"
-            f"{clima}"
+            f"{clima}\n\n"
+            f"🖼️ [Abrir imagem RGB no Sentinel Hub]({link_rgb})\n"
+            f"🟢 [Abrir imagem NDVI no Sentinel Hub]({link_ndvi})"
         )
 
-        await update.message.reply_text(texto, parse_mode="Markdown")
-
-        rgb_path = baixar_imagem(lat, lon, SCRIPT_RGB, "imagem_rgb.png")
-        ndvi_path = baixar_imagem(lat, lon, SCRIPT_NDVI, "imagem_ndvi.png")
-
-        if rgb_path:
-            await update.message.reply_photo(photo=InputFile(rgb_path), caption="🖼️ Imagem RGB")
-        if ndvi_path:
-            await update.message.reply_photo(photo=InputFile(ndvi_path), caption="🟢 Imagem NDVI")
-
+        await update.message.reply_text(texto, parse_mode="Markdown", disable_web_page_preview=True)
         await update.message.reply_location(latitude=lat, longitude=lon)
 
 # ============ MAIN ============
