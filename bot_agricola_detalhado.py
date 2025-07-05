@@ -1,3 +1,4 @@
+
 import json
 import logging
 import requests
@@ -21,8 +22,10 @@ with open("dados_plantio.json", encoding="utf-8") as f:
 # Mensagem de boas-vindas
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome = (
-        "🌾 Olá! Este é o Bot Agrícola Sekita.\n"
-        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagem de satélite.\n"
+        "🌾 Olá! Este é o Bot Agrícola Sekita.
+"
+        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagens atualizadas (RGB e NDVI).
+"
         "Digite (ex: Pivô 01) para começar. 🌱"
     )
     await update.message.reply_text(welcome)
@@ -44,35 +47,48 @@ def obter_clima(lat, lon):
         temp = atual["main"]["temp"]
         umidade = atual["main"]["humidity"]
         vento = atual["wind"]["speed"]
-        chuva = atual.get("pop", 0) * 100
+        chuva_prob = atual.get("pop", 0) * 100
+        chuva_mm = atual.get("rain", {}).get("3h", 0)
 
-        if chuva > 0:
-            chuva_texto = f"🌧️ Previsão de chuva: {chuva:.0f}%"
-        else:
-            chuva_texto = "🌧️ Previsão de chuva: 0%"
+        chuva_texto = (
+            f"🌧️ Previsão de chuva: {chuva_prob:.0f}%
+"
+            f"📏 Estimativa: {chuva_mm:.1f} mm nas próximas 3h"
+            if chuva_prob > 0 else "🌧️ Previsão de chuva: 0%"
+        )
 
         return (
-            f"🌤️ *Clima agora:* {descricao}\n"
-            f"🌡️ Temperatura: {temp}°C\n"
-            f"💧 Umidade: {umidade}%\n"
-            f"🍃 Vento: {vento:.2f} m/s\n"
+            f"🌤️ *Clima agora:* {descricao}
+"
+            f"🌡️ Temperatura: {temp}°C
+"
+            f"💧 Umidade: {umidade}%
+"
+            f"🍃 Vento: {vento:.2f} m/s
+"
             f"{chuva_texto}"
         )
     return "❌ Clima indisponível."
 
-# Link satélite com data automática dos últimos 7 dias
-def gerar_link_satelite(lat, lon):
+# Gerar links de imagens do Sentinel
+def gerar_links_imagens(lat, lon):
     hoje = datetime.utcnow()
     inicio = hoje - timedelta(days=7)
     data_inicio = inicio.strftime("%Y-%m-%d")
     data_fim = hoje.strftime("%Y-%m-%d")
 
-    return (
-        f"https://apps.sentinel-hub.com/eo-browser/?"
-        f"lat={lat}&lng={lon}&zoom=16&themeId=AGRICULTURE-NORMAL-MODE"
+    base = "https://apps.sentinel-hub.com/eo-browser/"
+    rgb = (
+        f"{base}?lat={lat}&lng={lon}&zoom=16&themeId=AGRICULTURE-NORMAL-MODE"
         f"&datasetId=S2L2A&fromTime={data_inicio}&toTime={data_fim}"
-        f"&instanceId={SENTINEL_INSTANCE_ID}"
+        f"&layerId=1_TRUE_COLOR&instanceId={SENTINEL_INSTANCE_ID}"
     )
+    ndvi = (
+        f"{base}?lat={lat}&lng={lon}&zoom=16&themeId=AGRICULTURE-NORMAL-MODE"
+        f"&datasetId=S2L2A&fromTime={data_inicio}&toTime={data_fim}"
+        f"&layerId=4_NDVI&instanceId={SENTINEL_INSTANCE_ID}"
+    )
+    return rgb, ndvi
 
 # Resposta automática do bot
 async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -85,21 +101,36 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for r in resultados:
         lat, lon = r["latitude"], r["longitude"]
         clima = obter_clima(lat, lon)
-        link = gerar_link_satelite(lat, lon)
+        img_rgb, img_ndvi = gerar_links_imagens(lat, lon)
 
-        texto = f"""📍 *Fazenda:* {r['fazenda']}
-📅 *Data do Plantio:* {r['data_plantio']}
-🥕 *Cultura:* {r['cultura']}
-🌀 *Pivô:* {r['pivo']}
-📐 *Área:* {r['area']} ha
-🌱 *Plantio:* {r['numero_plantio']}
-📆 *Subsafra:* {r['subsafra']}
-👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}
+        texto = (
+            f"📍 *Fazenda:* {r['fazenda']}
+"
+            f"📅 *Data do Plantio:* {r['data_plantio']}
+"
+            f"🥕 *Cultura:* {r['cultura']}
+"
+            f"🌀 *Pivô:* {r['pivo']}
+"
+            f"📐 *Área:* {r['area']} ha
+"
+            f"🌱 *Plantio:* {r['numero_plantio']}
+"
+            f"📆 *Subsafra:* {r['subsafra']}
+"
+            f"👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}
 
-{clima}
+"
+            f"{clima}
 
-🛰️ *Imagem do Pivô Atualizada no Mapa:* [Clique aqui]({link})
-"""
+"
+            f"🖼️ *Imagem RGB:* [Visualizar]({img_rgb})
+"
+            f"🟢 *Imagem NDVI:* [Visualizar]({img_ndvi})
+
+"
+            f"📌 *Localização do pivô no mapa:* 👇"
+        )
 
         await update.message.reply_text(texto, parse_mode="Markdown")
         await update.message.reply_location(latitude=lat, longitude=lon)
