@@ -1,4 +1,3 @@
-
 import json
 import logging
 import requests
@@ -22,10 +21,8 @@ with open("dados_plantio.json", encoding="utf-8") as f:
 # Mensagem de boas-vindas
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome = (
-        "🌾 Olá! Este é o Bot Agrícola Sekita.
-"
-        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagens atualizadas (RGB e NDVI).
-"
+        "🌾 Olá! Este é o Bot Agrícola Sekita.\n"
+        "Consulte informações dos pivôs: cultura, data de plantio, população, clima e imagens atualizadas (RGB e NDVI).\n"
         "Digite (ex: Pivô 01) para começar. 🌱"
     )
     await update.message.reply_text(welcome)
@@ -52,22 +49,17 @@ def obter_clima(lat, lon):
 
         if chuva_prob > 0:
             chuva_texto = (
-                f"🌧️ Previsão de chuva: {chuva_prob:.0f}%
-"
+                f"🌧️ Previsão de chuva: {chuva_prob:.0f}%\n"
                 f"📏 Estimativa: {chuva_mm:.1f} mm nas próximas 3h"
             )
         else:
             chuva_texto = "🌧️ Previsão de chuva: 0%"
 
         return (
-            f"🌤️ *Clima agora:* {descricao}
-"
-            f"🌡️ Temperatura: {temp}°C
-"
-            f"💧 Umidade: {umidade}%
-"
-            f"🍃 Vento: {vento:.2f} m/s
-"
+            f"🌤️ *Clima agora:* {descricao}\n"
+            f"🌡️ Temperatura: {temp}°C\n"
+            f"💧 Umidade: {umidade}%\n"
+            f"🍃 Vento: {vento:.2f} m/s\n"
             f"{chuva_texto}"
         )
     return "❌ Clima indisponível."
@@ -106,31 +98,17 @@ async def responder_pivo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         img_rgb, img_ndvi = gerar_links_imagens(lat, lon)
 
         texto = (
-            f"📍 *Fazenda:* {r['fazenda']}
-"
-            f"📅 *Data do Plantio:* {r['data_plantio']}
-"
-            f"🥕 *Cultura:* {r['cultura']}
-"
-            f"🌀 *Pivô:* {r['pivo']}
-"
-            f"📐 *Área:* {r['area']} ha
-"
-            f"🌱 *Plantio:* {r['numero_plantio']}
-"
-            f"📆 *Subsafra:* {r['subsafra']}
-"
-            f"👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}
-
-"
-            f"{clima}
-
-"
-            f"🖼️ *Imagem RGB:* [Visualizar]({img_rgb})
-"
-            f"🟢 *Imagem NDVI:* [Visualizar]({img_ndvi})
-
-"
+            f"📍 *Fazenda:* {r['fazenda']}\n"
+            f"📅 *Data do Plantio:* {r['data_plantio']}\n"
+            f"🥕 *Cultura:* {r['cultura']}\n"
+            f"🌀 *Pivô:* {r['pivo']}\n"
+            f"📐 *Área:* {r['area']} ha\n"
+            f"🌱 *Plantio:* {r['numero_plantio']}\n"
+            f"📆 *Subsafra:* {r['subsafra']}\n"
+            f"👨‍🌾 *População/Ciclo:* {r['populacao_ciclo']}\n\n"
+            f"{clima}\n\n"
+            f"🖼️ *Imagem RGB:* [Visualizar]({img_rgb})\n"
+            f"🟢 *Imagem NDVI:* [Visualizar]({img_ndvi})\n\n"
             f"📌 *Localização do pivô no mapa:* 👇"
         )
 
