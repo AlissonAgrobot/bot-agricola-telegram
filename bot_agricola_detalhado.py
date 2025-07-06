@@ -7,6 +7,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
 
 # ============ CONFIG ============
+
 TOKEN = "8006515043:AAFapaNdYxv1sfgH126gxuBx3vAASAz-UF4"
 OPENWEATHER_API_KEY = "a633bcced8f4d4eb76047d2a4981e252"
 
@@ -18,50 +19,11 @@ logger = logging.getLogger(__name__)
 with open("dados_plantio.json", encoding="utf-8") as f:
     dados_plantio = json.load(f)
 
-# ============ SCRIPTS ============
-SCRIPT_RGB = """//VERSION=3
-function setup() {
-  return {
-    input: ["B04", "B03", "B02", "dataMask"],
-    output: { bands: 4 }
-  };
-}
-function evaluatePixel(samples) {
-  let gain = 3.0;
-  let gamma = 0.85;
-  let boost = 0.05;
-  let r = Math.pow(samples.B04 * gain + boost, gamma);
-  let g = Math.pow(samples.B03 * gain + boost, gamma);
-  let b = Math.pow(samples.B02 * gain + boost, gamma);
-  return [Math.min(1, r), Math.min(1, g), Math.min(1, b), samples.dataMask];
-}
-"""
+# ============ SCRIPTS COMPACTADOS ============
 
-SCRIPT_NDVI = """//VERSION=3
-function setup() {
-  return {
-    input: ["B08", "B04", "dataMask"],
-    output: { bands: 4 }
-  };
-}
-function evaluatePixel(samples) {
-  let ndvi = index(samples.B08, samples.B04);
-  let color = colorBlend(ndvi,
-    [-0.2, 0.0, 0.2, 0.4, 0.6, 0.75, 0.85, 1.0],
-    [
-      [0.4, 0.0, 0.4],
-      [0.6, 0.0, 0.0],
-      [1.0, 0.4, 0.0],
-      [1.0, 1.0, 0.0],
-      [0.6, 1.0, 0.2],
-      [0.2, 0.8, 0.2],
-      [0.0, 0.5, 0.0],
-      [0.0, 0.3, 0.0]
-    ]
-  );
-  return [...color, samples.dataMask];
-}
-"""
+SCRIPT_RGB = """//VERSION=3 function setup(){return{input:["B04","B03","B02","dataMask"],output:{bands:4}};} function evaluatePixel(s){let r=Math.pow(s.B04*3+0.05,0.85);let g=Math.pow(s.B03*3+0.05,0.85);let b=Math.pow(s.B02*3+0.05,0.85);return[Math.min(1,r),Math.min(1,g),Math.min(1,b),s.dataMask];}"""
+
+SCRIPT_NDVI = """//VERSION=3 function setup(){return{input:["B08","B04","dataMask"],output:{bands:4}};} function evaluatePixel(s){let v=index(s.B08,s.B04);let c=colorBlend(v,[-0.2,0.0,0.2,0.4,0.6,0.75,0.85,1.0],[[0.4,0.0,0.4],[0.6,0.0,0.0],[1.0,0.4,0.0],[1.0,1.0,0.0],[0.6,1.0,0.2],[0.2,0.8,0.2],[0.0,0.5,0.0],[0.0,0.3,0.0]]);return [...c,s.dataMask];}"""
 
 # ============ LINKS SENTINEL ============
 def gerar_links_sentinel(lat, lon):
@@ -69,8 +31,8 @@ def gerar_links_sentinel(lat, lon):
     from_date = "2024-06-01"
     to_date = datetime.now().strftime("%Y-%m-%d")
 
-    script_rgb = urllib.parse.quote(SCRIPT_RGB)
-    script_ndvi = urllib.parse.quote(SCRIPT_NDVI)
+    script_rgb = urllib.parse.quote(SCRIPT_RGB, safe='')
+    script_ndvi = urllib.parse.quote(SCRIPT_NDVI, safe='')
 
     link_rgb = (
         f"{base_url}?lat={lat}&lng={lon}&zoom=16"
